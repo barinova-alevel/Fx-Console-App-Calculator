@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Microsoft.Extensions.Configuration;
+using Calculator.UI;
 
 class Program
 {
@@ -13,6 +14,9 @@ class Program
             .ReadFrom.Configuration(builder)
             .CreateLogger();
         Log.Logger.Information("start");
+
+        InputOutput inputOutput = new InputOutput();
+        inputOutput.Run();
 
         Console.ReadKey();
     }
