@@ -10,15 +10,22 @@ namespace Calculator.UI
         {
             try
             {
-                if (stringToBeCheckedIfValidExpression != null)
+                if (stringToBeCheckedIfValidExpression == null)
+                {
+                    Log.Information("String is null");
+                    return "";
+                }
+                else
                 {
                     if (IsValidMathExpression(stringToBeCheckedIfValidExpression))
                     {
                         return stringToBeCheckedIfValidExpression;
                     }
-                    else { throw new WrongInputException("The input is NOT a valid mathematical expression."); }
+                    else
+                    {
+                        throw new WrongInputException("The input is NOT a valid mathematical expression.");
+                    }
                 }
-                return "temp: 123";
             }
             catch (WrongInputException ex)
             {
@@ -46,10 +53,10 @@ namespace Calculator.UI
 
                 else if (userInput == "yes")
                 {
-                    //add in mode 2 selection "write expression manually or from file"
                     Console.WriteLine("Please enter expression: ");
-                    string userInp = ReadConsoleInput();
-                    GetExpression(userInp);
+                    string userExpression = ReadConsoleInput();
+                    GetExpression(userExpression);
+                    //GetExpression(null);
                 }
             }
         }
@@ -63,7 +70,7 @@ namespace Calculator.UI
         //expression is not counting parentheses
         private bool IsValidMathExpression(string input)
         {
-            string pattern = @"^\\s*[-+]?\\d+(\\.\\d+)?(\\s*[-+*/%^]\\s*[-+]?\\d+(\\.\\d+)?)*\\s*$ ";
+            string pattern = @"^\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*$";
             return Regex.IsMatch(input, pattern);
         }
     }
