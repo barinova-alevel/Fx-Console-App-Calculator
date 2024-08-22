@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Calculator.BL\Calculator.BL.csproj" />
     <ProjectReference Include="..\Calculator.Exceptions\Calculator.Exceptions.csproj" />
   </ItemGroup>
 

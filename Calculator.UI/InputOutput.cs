@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Calculator.Exceptions;
+using Calculator.BL;
 using Serilog;
 
 namespace Calculator.UI
@@ -13,7 +14,7 @@ namespace Calculator.UI
                 if (stringToBeCheckedIfValidExpression == null)
                 {
                     Log.Information("String is null");
-                    return "";
+                    return "temp: wrong inp";
                 }
                 else
                 {
@@ -36,6 +37,8 @@ namespace Calculator.UI
 
         public void Run()
         {
+            CalculatorLogic calculator = new CalculatorLogic();
+
             while (true)
             {
                 Console.WriteLine("Would you like to calculate an expression? (yes/no): ");
@@ -55,8 +58,9 @@ namespace Calculator.UI
                 {
                     Console.WriteLine("Please enter expression: ");
                     string userExpression = ReadConsoleInput();
-                    GetExpression(userExpression);
-                    //GetExpression(null);
+                    string validatedExpression = GetExpression(userExpression);
+                    double result = calculator.EvaluateExpression(validatedExpression);
+                    Log.Information($"{userExpression} result: {result}");
                 }
             }
         }
