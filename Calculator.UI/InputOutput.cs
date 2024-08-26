@@ -57,10 +57,22 @@ namespace Calculator.UI
                 else if (userInput == "yes")
                 {
                     Console.WriteLine("Please enter expression: ");
-                    string userExpression = ReadConsoleInput();
-                    string validatedExpression = GetExpression(userExpression);
-                    double result = calculator.EvaluateExpression(validatedExpression);
-                    Log.Information($"{userExpression} result: {result}");
+                    try
+                    {
+                        string userExpression = ReadConsoleInput();
+                        string validatedExpression = GetExpression(userExpression);
+                        double result = calculator.EvaluateExpression(validatedExpression);
+                        Log.Information($"{userExpression} result: {result}");
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Log.Information(ex.Message);
+                        continue;
+                    }
+                    catch (DevideByZeroException)
+                    {
+
+                    }
                 }
             }
         }

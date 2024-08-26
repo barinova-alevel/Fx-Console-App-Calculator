@@ -1,4 +1,6 @@
-﻿namespace Calculator.BL
+﻿using Serilog;
+
+namespace Calculator.BL
 {
     public class CalculatorLogic
     {
@@ -33,7 +35,8 @@
                 outputQueue.Enqueue(operatorStack.Pop());
             }
 
-            return EvaluatePostfix(outputQueue);
+            double result = EvaluatePostfix(outputQueue);
+            return result;
         }
 
         private List<string> Tokenize(string expression)
@@ -91,7 +94,14 @@
                 }
             }
 
-            return stack.Pop();
+            if (stack.Count > 0)
+            {
+                return stack.Pop();
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
         }
 
         private double ApplyOperator(string op, double left, double right)

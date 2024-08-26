@@ -2,7 +2,7 @@
 {
     public class WrongInputException : Exception
     {
-        public WrongInputException() : base() { }
+        public WrongInputException() : base("The expression is invalid.") { }
 
         public WrongInputException(string message) : base(message) { }
 
