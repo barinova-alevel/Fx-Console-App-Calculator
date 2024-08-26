@@ -3,7 +3,7 @@ namespace Calculator.Exceptions
 {
     public class InvalidOperatorException : Exception
     {
-        public InvalidOperatorException() : base("Invalid operator encountered.") { }
+        public InvalidOperatorException() : base() { }
 
         public InvalidOperatorException(string message) : base(message) { }
 

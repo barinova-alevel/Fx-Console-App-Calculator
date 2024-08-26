@@ -9,29 +9,13 @@ namespace Calculator.UI
     {
         public string GetExpression(string stringToBeCheckedIfValidExpression)
         {
-            try
+            if (IsValidMathExpression(stringToBeCheckedIfValidExpression))
             {
-                if (stringToBeCheckedIfValidExpression == null)
-                {
-                    Log.Information("String is null");
-                    return "temp: wrong inp";
-                }
-                else
-                {
-                    if (IsValidMathExpression(stringToBeCheckedIfValidExpression))
-                    {
-                        return stringToBeCheckedIfValidExpression;
-                    }
-                    else
-                    {
-                        throw new WrongInputException("The input is NOT a valid mathematical expression.");
-                    }
-                }
+                return stringToBeCheckedIfValidExpression;
             }
-            catch (WrongInputException ex)
+            else
             {
-                Log.Information(ex.Message);
-                return "temp: wrong inp";
+                throw new WrongInputException("The input is NOT a valid mathematical expression.");
             }
         }
 
@@ -64,14 +48,29 @@ namespace Calculator.UI
                         double result = calculator.EvaluateExpression(validatedExpression);
                         Log.Information($"{userExpression} result: {result}");
                     }
-                    catch (InvalidOperationException ex)
+                    catch (InvalidOperatorException)
                     {
-                        Log.Information(ex.Message);
+                        Log.Information("Invalid operator encountered.");
                         continue;
                     }
                     catch (DevideByZeroException)
                     {
 
+                    }
+                    catch (WrongInputException ex)
+                    {
+                        Log.Information(ex.Message);
+                        continue;
+                    }
+                    catch (NullReferenceException ex)
+                    {
+                        Log.Debug(ex.Message);
+                        continue;
+                    }
+                    catch (ArgumentNullException ex)
+                    {
+                        Log.Debug($"{ex.ParamName} can not be null \n{ex.StackTrace}");
+                        continue;
                     }
                 }
             }

@@ -1,5 +1,4 @@
-﻿using Serilog;
-
+﻿using Calculator.Exceptions;
 namespace Calculator.BL
 {
     public class CalculatorLogic
@@ -11,7 +10,6 @@ namespace Calculator.BL
             var tokens = Tokenize(expression);
             var priority = new PrioritiesOfOperations();
 
-            //add check on null
             foreach (var token in tokens)
             {
                 if (double.TryParse(token, out _))
@@ -43,6 +41,11 @@ namespace Calculator.BL
         {
             var tokens = new List<string>();
             var number = "";
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             foreach (var c in expression)
             {
@@ -94,13 +97,13 @@ namespace Calculator.BL
                 }
             }
 
-            if (stack.Count > 0)
+            if (stack.Count <= 0)
             {
-                return stack.Pop();
+                throw new WrongInputException();
             }
             else
             {
-                throw new InvalidOperationException();
+                return stack.Pop();
             }
         }
 
