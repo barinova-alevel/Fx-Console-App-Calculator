@@ -93,7 +93,15 @@ namespace Calculator.BL
                 {
                     var right = stack.Pop();
                     var left = stack.Pop();
-                    stack.Push(ApplyOperator(token, left, right));
+
+                    if (token == "/" && right == 0)
+                    {
+                        throw new DevideByZeroException();
+                    }
+                    else
+                    {
+                        stack.Push(ApplyOperator(token, left, right));
+                    }
                 }
             }
 

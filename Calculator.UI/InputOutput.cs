@@ -48,14 +48,15 @@ namespace Calculator.UI
                         double result = calculator.EvaluateExpression(validatedExpression);
                         Log.Information($"{userExpression} result: {result}");
                     }
-                    catch (InvalidOperatorException)
+                    catch (InvalidOperatorException ex)
                     {
-                        Log.Information("Invalid operator encountered.");
+                        Log.Information(ex.Message);
                         continue;
                     }
-                    catch (DevideByZeroException)
+                    catch (DevideByZeroException ex)
                     {
-
+                        Log.Information(ex.Message);
+                        continue;
                     }
                     catch (WrongInputException ex)
                     {

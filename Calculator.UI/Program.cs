@@ -17,7 +17,5 @@ class Program
 
         InputOutput inputOutput = new InputOutput();
         inputOutput.Run();
-
-        Console.ReadKey();
     }
 }
