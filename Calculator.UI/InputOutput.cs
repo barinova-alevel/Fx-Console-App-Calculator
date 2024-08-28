@@ -48,11 +48,6 @@ namespace Calculator.UI
                         double result = calculator.EvaluateExpression(validatedExpression);
                         Log.Information($"{userExpression} result: {result}");
                     }
-                    catch (InvalidOperatorException ex)
-                    {
-                        Log.Information(ex.Message);
-                        continue;
-                    }
                     catch (DevideByZeroException ex)
                     {
                         Log.Information(ex.Message);
@@ -71,6 +66,11 @@ namespace Calculator.UI
                     catch (ArgumentNullException ex)
                     {
                         Log.Debug($"{ex.ParamName} can not be null \n{ex.StackTrace}");
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex.Message);
                         continue;
                     }
                 }
