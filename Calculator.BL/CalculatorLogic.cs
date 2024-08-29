@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Calculator.Exceptions;
+﻿using Calculator.Exceptions;
 namespace Calculator.BL
 {
     public class CalculatorLogic
@@ -51,6 +50,7 @@ namespace Calculator.BL
         {
             var tokens = new List<string>();
             var number = "";
+            bool expectUnary = true;
 
             if (expression == null)
             {
@@ -62,7 +62,10 @@ namespace Calculator.BL
                 if (char.IsDigit(c) || c == '.')
                 {
                     number += c;
+                    expectUnary = false;
+
                 }
+
                 else if (IsOperator(c.ToString()))
                 {
                     if (number != "")
@@ -70,7 +73,16 @@ namespace Calculator.BL
                         tokens.Add(number);
                         number = "";
                     }
-                    tokens.Add(c.ToString());
+                    
+                    if ((c == '+' || c == '-') && expectUnary)
+                    {
+                        number += c;
+                    }
+                    else
+                    {
+                        tokens.Add(c.ToString());
+                        expectUnary = true;
+                    }
                 }
             }
 
