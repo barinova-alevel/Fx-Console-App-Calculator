@@ -12,5 +12,6 @@ namespace Calculator.UnitTests
         {
             Assert.Pass();
         }
+        //
     }
 }
