@@ -3,6 +3,8 @@ namespace Calculator.BL
 {
     public class CalculatorLogic
     {
+
+        private static readonly HashSet<string> Operators = new HashSet<string> { "+", "-", "*", "/", "%" };
         public double EvaluateExpression(string expression)
         {
             var outputQueue = new Queue<string>();
@@ -13,37 +15,36 @@ namespace Calculator.BL
             {
                 throw new WrongInputException("Wrong input. Consecutive operators are not allowed.");
             }
-            else
+
+            var tokens = Tokenize(expression);
+
+
+            foreach (var token in tokens)
             {
-                var tokens = Tokenize(expression);
-
-
-                foreach (var token in tokens)
+                if (double.TryParse(token, out _))
                 {
-                    if (double.TryParse(token, out _))
-                    {
-                        outputQueue.Enqueue(token);
-                    }
-                    else if (IsOperator(token))
-                    {
-                        while (operatorStack.Count > 0 &&
-                               IsOperator(operatorStack.Peek()) &&
-                               priority.GetPrecedence(token) <= priority.GetPrecedence(operatorStack.Peek()))
-                        {
-                            outputQueue.Enqueue(operatorStack.Pop());
-                        }
-                        operatorStack.Push(token);
-                    }
+                    outputQueue.Enqueue(token);
                 }
-
-                while (operatorStack.Count > 0)
+                else if (IsOperator(token))
                 {
-                    outputQueue.Enqueue(operatorStack.Pop());
+                    while (operatorStack.Count > 0 &&
+                           IsOperator(operatorStack.Peek()) &&
+                           priority.GetPrecedence(token) <= priority.GetPrecedence(operatorStack.Peek()))
+                    {
+                        outputQueue.Enqueue(operatorStack.Pop());
+                    }
+                    operatorStack.Push(token);
                 }
-
-                double result = EvaluatePostfix(outputQueue);
-                return result;
             }
+
+            while (operatorStack.Count > 0)
+            {
+                outputQueue.Enqueue(operatorStack.Pop());
+            }
+
+            double result = EvaluatePostfix(outputQueue);
+            return result;
+
         }
 
         private List<string> Tokenize(string expression)
@@ -73,7 +74,7 @@ namespace Calculator.BL
                         tokens.Add(number);
                         number = "";
                     }
-                    
+
                     if ((c == '+' || c == '-') && expectUnary)
                     {
                         number += c;
@@ -96,7 +97,7 @@ namespace Calculator.BL
 
         private bool IsOperator(string token)
         {
-            return token == "+" || token == "-" || token == "*" || token == "/" || token == "%";
+            return Operators.Contains(token);
         }
 
         private double EvaluatePostfix(Queue<string> outputQueue)
