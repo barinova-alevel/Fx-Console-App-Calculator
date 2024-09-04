@@ -45,8 +45,9 @@ namespace Calculator.UI
                     {
                         string userExpression = ReadConsoleInput();
                         string validatedExpression = GetExpression(userExpression);
-                        double result = calculator.EvaluateExpression(validatedExpression);
-                        Log.Information($"{userExpression} result: {result}");
+                        //double result = calculator.EvaluateExpression(validatedExpression);
+                        double result = calculator.EvaluateExpression(null);
+                       // Log.Information($"{userExpression} result: {result}");
                     }
                     catch (DevideByZeroException ex)
                     {
