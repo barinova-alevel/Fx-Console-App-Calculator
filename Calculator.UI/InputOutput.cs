@@ -40,13 +40,24 @@ namespace Calculator.UI
 
                 else if (userInput == "yes")
                 {
-                    Console.WriteLine("Please enter expression: ");
+                    Console.WriteLine("Would you like to read expressions from the file? (yes/no):");
+                    string userResponse = ReadConsoleInput();
+
                     try
                     {
-                        string userExpression = ReadConsoleInput();
-                        string validatedExpression = GetExpression(userExpression);
-                        double result = calculator.EvaluateExpression(validatedExpression);
-                        Log.Information($"{userExpression} result: {result}");
+                        if (userResponse != "yes")
+                        {
+                            Console.WriteLine("Please enter expression: ");
+                            string userExpression = ReadConsoleInput();
+                            string validatedExpression = GetExpression(userExpression);
+                            double result = calculator.EvaluateExpression(validatedExpression);
+                            Log.Information($"{userExpression} result: {result}");
+                        }
+                        else
+                        {
+                            GetPathFromConsole();
+                        }
+
                     }
                     catch (DevideByZeroException ex)
                     {
@@ -83,11 +94,79 @@ namespace Calculator.UI
             return userInput;
         }
 
-        //expression is not counting parentheses
         private bool IsValidMathExpression(string input)
         {
+            int parenthesesCount = 0;
+            foreach (char c in input)
+            {
+                if (c == '(')
+                    parenthesesCount++;
+                else if (c == ')')
+                    parenthesesCount--;
+
+                if (parenthesesCount < 0)
+                    return false;
+            }
+
+            if (parenthesesCount != 0)
+                return false;
+
             string pattern = @"^\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*$";
             return Regex.IsMatch(input, pattern);
         }
+
+        private string GetPathFromConsole()
+        {
+            Log.Information("Enter file path manually:");
+
+            string filePath = @"" + Console.ReadLine();
+            Log.Debug($"Console file path: {filePath}");
+
+            if (!IsValidPath(filePath))
+            {
+                if (TryAgainConsole("Invalid path"))
+                {
+                    return GetPathFromConsole();
+                }
+
+                Environment.Exit(1);
+            }
+
+            if (!File.Exists(filePath))
+            {
+                if (TryAgainConsole("File does not exist"))
+                {
+                    return GetPathFromConsole();
+                }
+
+                Environment.Exit(1);
+            }
+
+            return filePath;
+        }
+
+        private bool IsValidPath(string path)
+        {
+            bool isValid = false;
+            try
+            {
+                isValid = Path.IsPathRooted(path) && !string.IsNullOrWhiteSpace(Path.GetFileName(path));
+            }
+            catch (Exception)
+            {
+                // Ignore exception and return false
+            }
+
+            return isValid;
+        }
+
+        private bool TryAgainConsole(string failReason)
+        {
+            Log.Information($"{failReason}, would you like to try again? (yes/no)");
+            string userInput = Console.ReadLine().ToLower();
+
+            return userInput != "no";
+        }
     }
 }
+
