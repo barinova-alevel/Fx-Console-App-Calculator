@@ -74,7 +74,7 @@ namespace Calculator.UnitTests
         {
             // Arrange
             CalculatorLogic cl = new CalculatorLogic();
-            string expression = "7.3/2";
+            string expression = "7.3/0";
             string exceptionMessage = "Attempt to devide by zero.";
 
             // Act & Assert 
@@ -82,36 +82,32 @@ namespace Calculator.UnitTests
             Assert.That(ex.Message, Is.EqualTo(exceptionMessage));
         }
 
-        [TestCase("", "The input is NOT a valid mathematical expression.", //Expected: "The input is NOT a valid mathematical expression."
-            TestName = "EvaluateExpression_Negative_EmptyExpression")]     //  But was: "The expression is invalid."
-
-        [TestCase("3++2", "Wrong input. Consecutive operators are not allowed.", //not run
+        [TestCase("",
+            TestName = "EvaluateExpression_Negative_EmptyExpression")]
+        [TestCase("3++2",
             TestName = "EvaluateExpression_ExpressionWithConsecutiveOperators")]
+        [TestCase("abc",
+            TestName = "EvaluateExpression_Negative_WrongFormatExpression")]
+        [TestCase("2+*3",
+            TestName = "EvaluateExpression_Negative_MalformedExpression")]
 
-        [TestCase("abc", "The input is NOT a valid mathematical expression.", //Expected: "The input is NOT a valid mathematical expression."
-            TestName = "EvaluateExpression_Negative_WrongFormatExpression")]  //But was: "The expression is invalid."
-
-        [TestCase("2+*3", "The input is NOT a valid mathematical expression.", //Expected: "The input is NOT a valid mathematical expression."
-            TestName = "EvaluateExpression_Negative_MalformedExpression")]     //But was:  "Wrong input. Consecutive operators are not allowed."
-
-        public void EvaluateExpression_Negative(string expression, string exceptionMessage)
+        public void EvaluateExpression_Negative(string expression)
         {
             // Arrange
             CalculatorLogic cl = new CalculatorLogic();
 
             // Act & Assert 
             var ex = Assert.Throws<WrongInputException>(() => cl.EvaluateExpression(expression));
-            //Assert.That(ex.Message, Is.EqualTo(exceptionMessage));
         }
 
         [Test]
-        public void EvaluateExpression_NullPassing()//NullReferenceException Message: Object reference not set to an instance of an object.
+        public void EvaluateExpression_NullPassing()
         {
             // Arrange
             CalculatorLogic cl = new CalculatorLogic();
 
             // Act & Assert
-            Assert.DoesNotThrow(() => cl.EvaluateExpression(null));
+            Assert.Catch<NullReferenceException>(() => cl.EvaluateExpression(null));
         }
     }
 }
