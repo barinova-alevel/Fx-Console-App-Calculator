@@ -2,6 +2,7 @@
 using Calculator.Exceptions;
 using Calculator.BL;
 using Serilog;
+using Calculator.UI.Helper;
 
 namespace Calculator.UI
 {
@@ -55,7 +56,10 @@ namespace Calculator.UI
                         }
                         else
                         {
-                            GetPathFromConsole();
+                            string filePath = GetPathFromConsole();
+                            FileAnalyzer fileAnalyzer = new FileAnalyzer(filePath);
+                            LineIterator lineIterator = fileAnalyzer.GetIterator();
+                            fileAnalyzer.Analyze(lineIterator);
                         }
 
                     }
