@@ -1,5 +1,6 @@
-﻿using Calculator.UI.Helper.Exceptions;
-using Calculator.UI.Helper.Models;
+﻿using Calculator.BL;
+using System.Text.RegularExpressions;
+using Calculator.UI.Helper.Exceptions;
 using Serilog;
 
 namespace Calculator.UI.Helper
@@ -13,6 +14,7 @@ namespace Calculator.UI.Helper
         {
             this._filePath = filePath;
         }
+
         public LineIterator GetIterator()
         {
             if (_lineIterator == null)
@@ -27,85 +29,64 @@ namespace Calculator.UI.Helper
             }
         }
 
-        public FileAnalyzeResult Analyze(LineIterator lineIterator)
+        public void Analyze(LineIterator lineIterator)
         {
-            int maxIndex = 0;
             int indexOfCurrentLine = 0;
-            int counterOfNumericLines = 0;
-            int linesCounter = 0;
-            double? maxSum = null;
             string line;
-            LineAnalyzer _lineAnalyzer = new LineAnalyzer();
-            List<int> invalidLines = new List<int>();
 
-            try
+            if (lineIterator != null)
             {
-                if (lineIterator != null)
+                do
                 {
-                    do
-                    {
-                        line = lineIterator.GetNextLine();
-                        if (line != null)
-                        {
-                            linesCounter++;
-                        }
-                        LineAnalyzeResult lineResult = _lineAnalyzer.AnalyzeLine(line, indexOfCurrentLine);
-
-                        if (lineResult != null)
-                        {
-                            //if (lineResult.IsValid)
-                            //{
-                                if (maxSum == null)
-                                {
-                                    maxSum = lineResult.LineSum;
-                                    maxIndex = lineResult.LineIndex;
-                                }
-                                else if (lineResult.LineSum > maxSum)
-                                {
-                                    maxSum = lineResult.LineSum;
-                                    maxIndex = lineResult.LineIndex;
-                                }
-                                counterOfNumericLines++;
-                            //}
-                            //else
-                            //{
-                            //    Log.Information($"Adding line number {lineResult.LineIndex + 1} to non numeric.");
-                            //    invalidLines.Add(lineResult.LineIndex);
-                            //}
-                            indexOfCurrentLine++;
-                        }
-
-                    }
-                    while (line != null);
+                    line = lineIterator.GetNextLine();
+                    AnalyzeLine(line, indexOfCurrentLine);
+                    indexOfCurrentLine++;
                 }
-
-                if (counterOfNumericLines == 0 && linesCounter != 0)
-                {
-                    throw new AllLinesNonNumericException("All lines are non numeric.");
-                }
-                else if (linesCounter == 0)
-                {
-                    throw new EmptyFileException("There is no lines to calculate.");
-                }
-                else
-                {
-                    Log.Information($"Number of line with max sum: {(maxIndex + 1)}");
-                    return new FileAnalyzeResult(maxIndex, invalidLines);
-                }
-
+                while (line != null);
             }
-            catch (AllLinesNonNumericException ex)
+
+        }
+
+        public void AnalyzeLine(string line, int lineIndex)
+        {
+            if (line != null && IsValidMathExpression(line))
             {
-                Log.Information($"There is no lines to calculate. {ex.Message}");
-                return new FileAnalyzeResult(-1, invalidLines);
+                CalculatorLogic cl = new CalculatorLogic();
+                Log.Information($"Calculating line {lineIndex + 1}");
+                double lineSum = cl.EvaluateExpression(line);
+                Log.Information($"Result of {line}: {lineSum}");
+                //add result to a file - separate method
             }
-            catch (EmptyFileException ex)
+            else if (line == null)
             {
-                Log.Information($"{ex.Message}");
-                return new FileAnalyzeResult(-1, invalidLines);
+                Log.Information("There is no more lines.");
+            }
+            else
+            {
+                Log.Information($"Line {lineIndex + 1} {line} is not a valid math expression.");
             }
         }
-    }
 
+        private bool IsValidMathExpression(string input)
+        {
+            int parenthesesCount = 0;
+            foreach (char c in input)
+            {
+                if (c == '(')
+                    parenthesesCount++;
+                else if (c == ')')
+                    parenthesesCount--;
+
+                if (parenthesesCount < 0)
+                    return false;
+            }
+
+            if (parenthesesCount != 0)
+                return false;
+
+            string pattern = @"^\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*$";
+            return Regex.IsMatch(input, pattern);
+        }
+    }
 }
 
