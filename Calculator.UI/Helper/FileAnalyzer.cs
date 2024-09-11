@@ -1,6 +1,5 @@
 ﻿using Calculator.BL;
 using System.Text.RegularExpressions;
-using Calculator.UI.Helper.Exceptions;
 using Serilog;
 
 namespace Calculator.UI.Helper
@@ -44,7 +43,6 @@ namespace Calculator.UI.Helper
                 }
                 while (line != null);
             }
-
         }
 
         public void AnalyzeLine(string line, int lineIndex)
@@ -57,7 +55,11 @@ namespace Calculator.UI.Helper
                 Log.Information($"Result of {line}: {lineSum}");
                 //add result to a file - separate method
             }
-            else if (line == null)
+            else if (lineIndex == 0 && line == null)
+            {
+                Log.Information("The file is empty.");
+            }
+            else if (lineIndex != 0 && line == null)
             {
                 Log.Information("There is no more lines.");
             }
@@ -89,4 +91,3 @@ namespace Calculator.UI.Helper
         }
     }
 }
-

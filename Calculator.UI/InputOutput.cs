@@ -3,7 +3,6 @@ using Calculator.Exceptions;
 using Calculator.BL;
 using Serilog;
 using Calculator.UI.Helper;
-using Calculator.UI.Helper.Exceptions;
 
 namespace Calculator.UI
 {
@@ -82,11 +81,6 @@ namespace Calculator.UI
                     catch (ArgumentNullException ex)
                     {
                         Log.Debug($"{ex.ParamName} can not be null \n{ex.StackTrace}");
-                        continue;
-                    }
-                    catch (EmptyFileException ex)
-                    {
-                        Log.Debug(ex.Message);
                         continue;
                     }
                     catch (Exception ex)
