@@ -115,7 +115,8 @@ namespace Calculator.UI
             if (parenthesesCount != 0)
                 return false;
 
-            string pattern = @"^\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*$";
+            string pattern = @"^\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\))(\s*[-+*/%^]\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\)))*\s*$";
+
             return Regex.IsMatch(input, pattern);
         }
 

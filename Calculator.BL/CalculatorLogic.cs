@@ -35,6 +35,21 @@ namespace Calculator.BL
                     }
                     operatorStack.Push(token);
                 }
+                else if (token == "(")
+                {
+                    operatorStack.Push(token);
+                }
+                else if (token == ")")
+                {
+                    while (operatorStack.Count > 0 && operatorStack.Peek() != "(")
+                    {
+                        outputQueue.Enqueue(operatorStack.Pop());
+                    }
+                    if (operatorStack.Count > 0 && operatorStack.Peek() == "(")
+                    {
+                        operatorStack.Pop();
+                    }
+                }
             }
 
             while (operatorStack.Count > 0)
@@ -84,6 +99,16 @@ namespace Calculator.BL
                         tokens.Add(c.ToString());
                         expectUnary = true;
                     }
+                }
+                else if (c == '(' || c == ')')
+                {
+                    if (number != "")
+                    {
+                        tokens.Add(number);
+                        number = "";
+                    }
+                    tokens.Add(c.ToString());
+                    expectUnary = c == '(';
                 }
             }
 
