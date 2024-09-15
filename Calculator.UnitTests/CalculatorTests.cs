@@ -54,6 +54,16 @@ namespace Calculator.UnitTests
             TestName = "EvaluateExpression_Leading/Trailing Whitespace",
             Description = "Check handling of expression with whitespace.")]
 
+        [TestCase(" (2+30)/2 ", 16,
+            TestName = "EvaluateExpression_ExpressionWithParenthases",
+            Description = "Check handling of expression with parenthases.")]
+
+        [TestCase(" 2*(2+30)/(10.5-0.5) ", 6.4,
+            TestName = "EvaluateExpression_ExpressionWithMultipleParenthases",
+            Description = "Check handling of expression with multiple parenthases.")]
+
+
+
         public void EvaluateExpression_Positive(string expression, double expectedResult)
         {
             // Arrange
