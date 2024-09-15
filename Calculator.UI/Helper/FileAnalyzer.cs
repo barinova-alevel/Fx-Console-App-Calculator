@@ -1,7 +1,5 @@
 ﻿using Calculator.BL;
-using System.Text.RegularExpressions;
 using Serilog;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Calculator.UI.Helper
 {
@@ -54,16 +52,17 @@ namespace Calculator.UI.Helper
 
         public void AnalyzeLine(string line, int lineIndex, string filePathForCalcResult)
         {
+            MathExpressionValidator validator = new MathExpressionValidator();
             using (StreamWriter writer = new StreamWriter(filePathForCalcResult, true))
             {
-                if (line != null && IsValidMathExpression(line))
+                if (line != null && validator.IsValidMathExpression(line))
                 {
                     CalculatorLogic cl = new CalculatorLogic();
                     Log.Information($"Calculating line {lineIndex + 1}");
                     double lineSum = cl.EvaluateExpression(line);
                     Log.Information($"Result of {line}: {lineSum}");
                     string lineSumString = lineSum.ToString("F6");
-                    writer.WriteLine($"Line {lineIndex+1}: {lineSumString}");
+                    writer.WriteLine($"Line {lineIndex + 1}: {lineSumString}");
                 }
                 else if (lineIndex == 0 && line == null)
                 {
@@ -80,27 +79,6 @@ namespace Calculator.UI.Helper
                     Log.Information($"Line {lineIndex + 1} {line} is not a valid math expression.");
                 }
             }
-        }
-
-        private bool IsValidMathExpression(string input)
-        {
-            int parenthesesCount = 0;
-            foreach (char c in input)
-            {
-                if (c == '(')
-                    parenthesesCount++;
-                else if (c == ')')
-                    parenthesesCount--;
-
-                if (parenthesesCount < 0)
-                    return false;
-            }
-
-            if (parenthesesCount != 0)
-                return false;
-
-            string pattern = @"^\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*$";
-            return Regex.IsMatch(input, pattern);
         }
     }
 }

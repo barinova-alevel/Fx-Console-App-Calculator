@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Calculator.Exceptions;
+﻿using Calculator.Exceptions;
 using Calculator.BL;
 using Serilog;
 using Calculator.UI.Helper;
@@ -10,7 +9,8 @@ namespace Calculator.UI
     {
         public string GetExpression(string stringToBeCheckedIfValidExpression)
         {
-            if (IsValidMathExpression(stringToBeCheckedIfValidExpression))
+            MathExpressionValidator validator = new MathExpressionValidator();
+            if (validator.IsValidMathExpression(stringToBeCheckedIfValidExpression))
             {
                 return stringToBeCheckedIfValidExpression;
             }
@@ -96,34 +96,6 @@ namespace Calculator.UI
         {
             string userInput = Console.ReadLine().ToLower();
             return userInput;
-        }
-
-        private bool IsValidMathExpression(string input)
-        {
-            int parenthesesCount = 0;
-            foreach (char c in input)
-            {
-                if (c == '(')
-                    parenthesesCount++;
-                else if (c == ')')
-                    parenthesesCount--;
-
-                if (parenthesesCount < 0)
-                {
-                    Log.Information("There are unmatched parentheses.");
-                    return false;
-                }
-            }
-
-            if (parenthesesCount != 0)
-            {
-                Log.Information("There are unmatched parentheses.");
-                return false;
-            }
-
-            string pattern = @"^\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\))(\s*[-+*/%^]\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\)))*\s*$";
-            
-            return Regex.IsMatch(input, pattern);
         }
 
         private string GetPathFromConsole()
