@@ -109,14 +109,20 @@ namespace Calculator.UI
                     parenthesesCount--;
 
                 if (parenthesesCount < 0)
+                {
+                    Log.Information("There are unmatched parentheses.");
                     return false;
+                }
             }
 
             if (parenthesesCount != 0)
+            {
+                Log.Information("There are unmatched parentheses.");
                 return false;
+            }
 
             string pattern = @"^\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\))(\s*[-+*/%^]\s*[-+]?(\d+(\.\d+)?|\(\s*[-+]?\d+(\.\d+)?(\s*[-+*/%^]\s*[-+]?\d+(\.\d+)?)*\s*\)))*\s*$";
-
+            
             return Regex.IsMatch(input, pattern);
         }
 

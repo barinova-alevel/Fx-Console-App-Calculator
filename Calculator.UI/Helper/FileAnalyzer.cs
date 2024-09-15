@@ -1,6 +1,7 @@
 ﻿using Calculator.BL;
 using System.Text.RegularExpressions;
 using Serilog;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Calculator.UI.Helper
 {
@@ -32,40 +33,52 @@ namespace Calculator.UI.Helper
         {
             int indexOfCurrentLine = 0;
             string line;
+            string filePathForCalcResult = "C:\\Temp\\CalcResult.txt";
+
+            if (File.Exists(filePathForCalcResult))
+            {
+                File.Delete(filePathForCalcResult);
+            }
 
             if (lineIterator != null)
             {
                 do
                 {
                     line = lineIterator.GetNextLine();
-                    AnalyzeLine(line, indexOfCurrentLine);
+                    AnalyzeLine(line, indexOfCurrentLine, filePathForCalcResult);
                     indexOfCurrentLine++;
                 }
                 while (line != null);
             }
         }
 
-        public void AnalyzeLine(string line, int lineIndex)
+        public void AnalyzeLine(string line, int lineIndex, string filePathForCalcResult)
         {
-            if (line != null && IsValidMathExpression(line))
+            using (StreamWriter writer = new StreamWriter(filePathForCalcResult, true))
             {
-                CalculatorLogic cl = new CalculatorLogic();
-                Log.Information($"Calculating line {lineIndex + 1}");
-                double lineSum = cl.EvaluateExpression(line);
-                Log.Information($"Result of {line}: {lineSum}");
-                //add result to a file - separate method
-            }
-            else if (lineIndex == 0 && line == null)
-            {
-                Log.Information("The file is empty.");
-            }
-            else if (lineIndex != 0 && line == null)
-            {
-                Log.Information("There is no more lines.");
-            }
-            else
-            {
-                Log.Information($"Line {lineIndex + 1} {line} is not a valid math expression.");
+                if (line != null && IsValidMathExpression(line))
+                {
+                    CalculatorLogic cl = new CalculatorLogic();
+                    Log.Information($"Calculating line {lineIndex + 1}");
+                    double lineSum = cl.EvaluateExpression(line);
+                    Log.Information($"Result of {line}: {lineSum}");
+                    string lineSumString = lineSum.ToString("F6");
+                    writer.WriteLine($"Line {lineIndex+1}: {lineSumString}");
+                }
+                else if (lineIndex == 0 && line == null)
+                {
+                    Log.Information("The file is empty.");
+                }
+                else if (lineIndex != 0 && line == null)
+                {
+                    Log.Information("There is no more lines.");
+                    Log.Information($"Calculation result has been written to {filePathForCalcResult}");
+                }
+                else
+                {
+                    writer.WriteLine($"Line {lineIndex + 1}: is not a valid math expression.");
+                    Log.Information($"Line {lineIndex + 1} {line} is not a valid math expression.");
+                }
             }
         }
 
