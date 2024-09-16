@@ -1,4 +1,5 @@
 ﻿using Calculator.BL;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Calculator.UI.Helper
@@ -29,9 +30,15 @@ namespace Calculator.UI.Helper
 
         public void Analyze(LineIterator lineIterator)
         {
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfiguration config = builder.Build();
+
             int indexOfCurrentLine = 0;
             string line;
-            string filePathForCalcResult = "C:\\Temp\\CalcResult.txt";
+            string filePathForCalcResult = config["FilePath"];
 
             if (File.Exists(filePathForCalcResult))
             {

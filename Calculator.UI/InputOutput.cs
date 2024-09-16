@@ -46,7 +46,14 @@ namespace Calculator.UI
 
                     try
                     {
-                        if (userResponse != "yes")
+                        if (userResponse == "yes")
+                        {
+                            string filePath = GetPathFromConsole();
+                            FileAnalyzer fileAnalyzer = new FileAnalyzer(filePath);
+                            LineIterator lineIterator = fileAnalyzer.GetIterator();
+                            fileAnalyzer.Analyze(lineIterator);
+                        }
+                        else 
                         {
                             Console.WriteLine("Please enter expression: ");
                             string userExpression = ReadConsoleInput();
@@ -54,14 +61,6 @@ namespace Calculator.UI
                             double result = calculator.EvaluateExpression(validatedExpression);
                             Log.Information($"{userExpression} result: {result}");
                         }
-                        else
-                        {
-                            string filePath = GetPathFromConsole();
-                            FileAnalyzer fileAnalyzer = new FileAnalyzer(filePath);
-                            LineIterator lineIterator = fileAnalyzer.GetIterator();
-                            fileAnalyzer.Analyze(lineIterator);
-                        }
-
                     }
                     catch (DevideByZeroException ex)
                     {
@@ -137,7 +136,7 @@ namespace Calculator.UI
             }
             catch (Exception)
             {
-                // Ignore exception and return false
+                return false;
             }
 
             return isValid;

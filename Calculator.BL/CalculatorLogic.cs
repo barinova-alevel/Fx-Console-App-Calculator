@@ -73,16 +73,16 @@ namespace Calculator.BL
                 throw new ArgumentNullException();
             }
 
-            foreach (var c in expression)
+            foreach (var symbol in expression)
             {
-                if (char.IsDigit(c) || c == '.')
+                if (char.IsDigit(symbol) || symbol == '.')
                 {
-                    number += c;
+                    number += symbol;
                     expectUnary = false;
 
                 }
 
-                else if (IsOperator(c.ToString()))
+                else if (IsOperator(symbol.ToString()))
                 {
                     if (number != "")
                     {
@@ -90,25 +90,25 @@ namespace Calculator.BL
                         number = "";
                     }
 
-                    if ((c == '+' || c == '-') && expectUnary)
+                    if ((symbol == '+' || symbol == '-') && expectUnary)
                     {
-                        number += c;
+                        number += symbol;
                     }
                     else
                     {
-                        tokens.Add(c.ToString());
+                        tokens.Add(symbol.ToString());
                         expectUnary = true;
                     }
                 }
-                else if (c == '(' || c == ')')
+                else if (symbol == '(' || symbol == ')')
                 {
                     if (number != "")
                     {
                         tokens.Add(number);
                         number = "";
                     }
-                    tokens.Add(c.ToString());
-                    expectUnary = c == '(';
+                    tokens.Add(symbol.ToString());
+                    expectUnary = symbol == '(';
                 }
             }
 
