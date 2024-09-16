@@ -35,6 +35,21 @@ namespace Calculator.BL
                     }
                     operatorStack.Push(token);
                 }
+                else if (token == "(")
+                {
+                    operatorStack.Push(token);
+                }
+                else if (token == ")")
+                {
+                    while (operatorStack.Count > 0 && operatorStack.Peek() != "(")
+                    {
+                        outputQueue.Enqueue(operatorStack.Pop());
+                    }
+                    if (operatorStack.Count > 0 && operatorStack.Peek() == "(")
+                    {
+                        operatorStack.Pop();
+                    }
+                }
             }
 
             while (operatorStack.Count > 0)
@@ -58,16 +73,16 @@ namespace Calculator.BL
                 throw new ArgumentNullException();
             }
 
-            foreach (var c in expression)
+            foreach (var symbol in expression)
             {
-                if (char.IsDigit(c) || c == '.')
+                if (char.IsDigit(symbol) || symbol == '.')
                 {
-                    number += c;
+                    number += symbol;
                     expectUnary = false;
 
                 }
 
-                else if (IsOperator(c.ToString()))
+                else if (IsOperator(symbol.ToString()))
                 {
                     if (number != "")
                     {
@@ -75,15 +90,25 @@ namespace Calculator.BL
                         number = "";
                     }
 
-                    if ((c == '+' || c == '-') && expectUnary)
+                    if ((symbol == '+' || symbol == '-') && expectUnary)
                     {
-                        number += c;
+                        number += symbol;
                     }
                     else
                     {
-                        tokens.Add(c.ToString());
+                        tokens.Add(symbol.ToString());
                         expectUnary = true;
                     }
+                }
+                else if (symbol == '(' || symbol == ')')
+                {
+                    if (number != "")
+                    {
+                        tokens.Add(number);
+                        number = "";
+                    }
+                    tokens.Add(symbol.ToString());
+                    expectUnary = symbol == '(';
                 }
             }
 
